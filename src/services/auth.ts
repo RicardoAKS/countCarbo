@@ -2,20 +2,19 @@ var Buffer = require('buffer/').Buffer;
 
 interface Response {
     token: string;
-    user: {
-        name: string;
-        email: string;
-    }
+    user: RegisterForm
 }
 
 export function signIn(): Promise<Response>{
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve({
-                token: Buffer.from('ricardo:123456', 'binary').toString('base64'),
+                token: Buffer.from('ricardoraks1003@gmail.com:7c4a8d09ca3762af61e59520943dc26494f8941b', 'binary').toString('base64'),
                 user: {
                     name: "Ricardo",
-                    email: "ricardoraks1003@gmail.com"
+                    lastName: "Alexandre",
+                    email: "ricardoraks1003@gmail.com",
+                    password: "7c4a8d09ca3762af61e59520943dc26494f8941b"
                 }
             })
         }, 2000);
