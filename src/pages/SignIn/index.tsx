@@ -9,10 +9,6 @@ import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import Logo from '../../../assets/svgs/logo.svg';
 
 const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
-    const [fontsLoaded] = useFonts({
-        'Bourton-inline': require("../../../assets/fonts/bourtoninline.ttf")
-    });
-
     const { control, handleSubmit } = useForm<LoginForm>({
         mode: 'onChange',
         defaultValues: {
@@ -145,13 +141,7 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
                             className="w-full py-3 flex justify-center items-center bg-white mt-3 rounded-md"
                             onPress={handleSubmit(handleSignIn)}
                         >
-                            {!fontsLoaded && (
-                                <Text className="text-[#25a55f] text-[20px]">ENTRAR</Text>
-                            )}
-
-                            {fontsLoaded && (
-                                <Text className="text-[#000] font-['Bourton-inline'] text-[20px]">ENTRAR</Text>
-                            )}
+                            <Text className="text-[#000] font-['Bourton-inline'] text-[20px]">ENTRAR</Text>
                         </TouchableOpacity>
 
                         <Text className="text-white mt-3" onPress={

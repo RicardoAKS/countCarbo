@@ -20,10 +20,6 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
         }
     });
 
-    const [fontsLoaded] = useFonts({
-        'Bourton-inline': require("../../../assets/fonts/bourtoninline.ttf")
-    });
-
     function submitForm(values: RegisterForm) {
         register(values)
     }
@@ -63,13 +59,7 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
                         </View>
 
-                        {fontsLoaded && (
-                            <Text className="text-4xl w-full text-center font-['Bourton-inline'] text-[#25a55f]">Cadastro</Text>
-                        )}
-
-                        {!fontsLoaded && (
-                            <Text className="text-4xl w-full text-center font-bold text-[#25a55f]">Cadastro</Text>
-                        )}
+                        <Text className="text-4xl w-full text-center font-['Bourton-inline'] text-[#25a55f]">Cadastro</Text>
 
                         <Text className="text-sm mb-5 text-[#25a55f] text-center w-full font-bold">Por favor insira os seus dados para o seu registro</Text>
 
@@ -256,14 +246,8 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
                         <TouchableOpacity className="w-full p-3 flex justify-center items-center rounded-md bg-white border border-black border-solid" onPress={handleSubmit(submitForm)}>
 
-                            {!fontsLoaded && (
-                                <Text className="text-black text-[20px] font-bold">CADASTRAR-SE</Text>
-                            )}
-
-                            {fontsLoaded && (
-                                <Text className="text-black text-[20px] font-['Bourton-inline']">CADASTRAR-SE</Text>
-                            )}
-
+                            <Text className="text-black text-[20px] font-['Bourton-inline']">CADASTRAR-SE</Text>
+                            
                         </TouchableOpacity>
 
 

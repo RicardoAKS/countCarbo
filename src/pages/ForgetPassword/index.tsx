@@ -13,10 +13,6 @@ const ForgetPassword: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
         }
     });
 
-    const [fontsLoaded] = useFonts({
-        'Bourton-inline': require("../../../assets/fonts/bourtoninline.ttf")
-    });
-
     async function submitEmail(values: ForgetPasswordType) {
         console.log(values);
 
@@ -54,17 +50,7 @@ const ForgetPassword: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
                     <View className="w-full px-3 pb-5 pt-3 bg-white rounded-b-lg">
 
-                        {fontsLoaded && (
-                            <>
-                                <Text className="text-4xl w-full text-center font-['Bourton-inline'] text-[#25a55f]">{"Recuperar\nminha senha"}</Text>
-                            </>
-                        )}
-
-                        {!fontsLoaded && (
-                            <>
-                                <Text className="text-4xl w-full text-center font-bold text-[#25a55f]">{"Recuperar\nminha senha"}</Text>
-                            </>
-                        )}
+                        <Text className="text-4xl w-full text-center font-['Bourton-inline'] text-[#25a55f]">{"Recuperar\nminha senha"}</Text>
 
                         <Text className="text-sm my-3 text-[#25a55f] text-justify w-full font-bold px-5">Digite seu e-mail para receber um link para redefinir a sua senha</Text>
 
@@ -120,13 +106,7 @@ const ForgetPassword: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
                         <TouchableOpacity className="w-full p-3 flex justify-center items-center rounded-md bg-white border border-black border-solid" onPress={handleSubmit(submitEmail)}>
 
-                            {!fontsLoaded && (
-                                <Text className="text-black text-[20px] font-bold">ENVIAR E-MAIL</Text>
-                            )}
-
-                            {fontsLoaded && (
-                                <Text className="text-black text-[20px] font-['Bourton-inline']">ENVIAR E-MAIL</Text>
-                            )}
+                            <Text className="text-black text-[20px] font-['Bourton-inline']">ENVIAR E-MAIL</Text>
 
                         </TouchableOpacity>
 
