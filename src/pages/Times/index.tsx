@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { View, Button, Text } from "react-native";
 import { useAuth } from "../../contexts/auth";
 
-const Dashboard: React.FC = () => {
+const Times: React.FC = () => {
     const { signOut, user } = useAuth();
 
     async function handleSignOut() {
@@ -17,4 +17,4 @@ const Dashboard: React.FC = () => {
     );
 };
 
-export default Dashboard;
+export default Times;
