@@ -23,7 +23,7 @@ interface AuthContextData {
     user: User | null;
     signIn(username: string, password: string): Promise<void>;
     signOut(): void;
-    register(values: RegisterForm): void;
+    register(values: RegisterForm): Promise<unknown>;
 }
 
 interface ForgetPasswordType {

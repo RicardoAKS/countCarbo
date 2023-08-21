@@ -48,51 +48,63 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     async function register(values: RegisterForm) {
-        console.log(values);
         
-        setLoading(true);
-        
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve("")
-            }, 1000);
-        });
+        return new Promise(async (resolve, reject) => {
+            
+            setLoading(true);
+            
+            try {
+                let response = await api.post("/app/createUser", JSON.stringify(values));
+    
+                if(response.status == 200){
+    
+                    setLoading(false);
 
-        setLoading(false);
+                    let user = values;
+                    delete user.password;
 
-        values.email    = values.email.toLocaleLowerCase();
-        values.password = SHA1(values.password).toString();
-        const token     = Buffer.from(values.email + ':' + values.password, 'binary').toString('base64')
-
-        Alert.alert(
-            "Cadastro de usuário", 
-            "Cadastro feito com sucesso!!", 
-            [
-                {
-                    text: "OK",
-                    onPress: () => {
-                        setLoading(true);
-
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                                resolve("")
-                            }, 1000)
-                        }).then(async () => {
-
-                            setUser(values);
-                    
-                            api.defaults.headers['Authorization'] = `Bearer ${token}`;
-                    
-                            await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(values));
-                            await AsyncStorage.setItem('@RNAuth:token', token);
-                            setLoading(false);
-                        })
-
-                    }
+                    setUser(user);
+            
+                    const token = response.data.token;
+            
+                    Alert.alert(
+                        "Cadastro de usuário", 
+                        "Cadastro feito com sucesso!!", 
+                        [
+                            {
+                                text: "OK",
+                                onPress: async () => {
+                                    setLoading(true);
+    
+                                    api.defaults.headers['Authorization'] = `Bearer ${token}`;
+                            
+                                    await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(user));
+                                    await AsyncStorage.setItem('@RNAuth:token', token);
+                                    resolve("");
+                                    setLoading(false);
+            
+                                }
+                            }
+                        ]
+                    )
                 }
-            ]
-        )
-
+            } catch (error) {
+                
+                if(error.response.status == 403){
+        
+                    Alert.alert(error.response.data.title, error.response.data.message, [{
+                        text: "OK",
+                        onPress: () => {
+                            setLoading(false);
+                        }
+                    }])
+        
+                }
+    
+                reject(error);
+            }
+        });
+        
     }
 
     useEffect(() => {
