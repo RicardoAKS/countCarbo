@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Alert, Keyboard, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack/lib/typescript/src/types';
+import { ForgetPasswordType } from '../../@types/app';
 
 const ForgetPassword: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
     const { control, handleSubmit } = useForm<ForgetPasswordType>({

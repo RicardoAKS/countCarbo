@@ -1,4 +1,6 @@
 /// <reference types="nativewind/types" />`
+import React, { useState } from 'react';
+import { ModalProps, PressableProps, ViewStyle, TextStyle, StyleProp } from "react-native";
 
 interface RegisterForm {
     name: string;
@@ -17,6 +19,29 @@ interface User {
     email: string;
 }
 
+interface ForgetPasswordType {
+    email: string;
+}
+
+interface CustomAlertButtonType extends PressableProps {
+    styles?: TextStyle;
+    text: string;
+}
+
+interface styleCustomAlertType {
+    message?: TextStyle;
+    container?: ViewStyle;
+    title?: TextStyle;
+}
+
+interface CustomAlertProps extends ModalProps {
+    styleCustomAlert: styleCustomAlertType,
+    buttons: Array<CustomAlertButtonType>,
+    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    title: string;
+    message: string;
+}
+
 interface AuthContextData {
     signed: boolean;
     loading: boolean;
@@ -24,8 +49,4 @@ interface AuthContextData {
     signIn(username: string, password: string): Promise<void>;
     signOut(): void;
     register(values: RegisterForm): Promise<unknown>;
-}
-
-interface ForgetPasswordType {
-    email: string;
 }

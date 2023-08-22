@@ -1,17 +1,38 @@
 import React, { createContext, PropsWithChildren, useEffect, useState, useContext } from 'react';
-import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as auth from '../services/auth';
 import api from '../services/api';
-import { SHA1 } from 'crypto-js';
 
-var Buffer = require('buffer/').Buffer;
+import { AuthContextData, CustomAlertButtonType, RegisterForm, User, styleCustomAlertType } from '../@types/app';
+import CustomAlert from '../components/CustomAlert';
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser]                 = useState<User | null>(null);
+    const [loading, setLoading]           = useState(true);
+
+    const [modalVisible, setModalVisible] = useState(false);
+    const [title, setTitle] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [styleCustomAlert, setStyleCustomAlert] = useState<styleCustomAlertType|null>(null);
+
+    const [buttons, setButtons] = useState<Array<CustomAlertButtonType>|null>(null);
+
+    useEffect(() => {
+
+        if(title != null && message != null && styleCustomAlert != null && buttons != null){
+            setModalVisible(true);
+        }
+
+    }, [title, message, styleCustomAlert, buttons]);
+    
+    const configCustomAlert = (title: string, message: string, buttons: Array<CustomAlertButtonType>, styleCustomAlert?: styleCustomAlertType) => {
+        setTitle(title);
+        setMessage(message);
+        setButtons(buttons);
+        setStyleCustomAlert(styleCustomAlert);
+    }
 
     async function signIn(username: string, password: string) {
 
@@ -53,56 +74,143 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             
             setLoading(true);
             
-            try {
-                let response = await api.post("/app/createUser", JSON.stringify(values));
-    
-                if(response.status == 200){
-    
-                    setLoading(false);
+            console.log(values)
 
-                    let user = values;
-                    delete user.password;
+            api.post("/app/createUser", JSON.stringify(values))
+            .then(response => {
 
-                    setUser(user);
-            
-                    const token = response.data.token;
-            
-                    Alert.alert(
-                        "Cadastro de usuário", 
-                        "Cadastro feito com sucesso!!", 
+                setLoading(false);
+
+                let user = values;
+                delete user.password;
+
+                setUser(user);
+        
+                const token = response.data.token;
+        
+                configCustomAlert(
+                    "Cadastro de usuário", 
+                    "Cadastro feito com sucesso!!", 
+                    [
+                        {
+                            text: "OK",
+                            onPress: async () => {
+                                setLoading(true);
+
+                                api.defaults.headers['Authorization'] = `Bearer ${token}`;
+                        
+                                await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(user));
+                                await AsyncStorage.setItem('@RNAuth:token', token);
+                                resolve("");
+
+                                setTitle(null);
+                                setMessage(null);
+                                setButtons(null);
+                                setStyleCustomAlert(null);
+
+                                setLoading(false);
+        
+                            },
+                            styles: {
+                                backgroundColor: '#00000000',
+                                color: '#fff',
+                                borderColor: '#fff'
+                            }
+                        }
+                    ],
+                    {
+                        container: {
+                            backgroundColor: '#25a55f'
+                        },
+                        title: {
+                            color: '#fff',
+                        },
+                        message: {
+                            color: '#fff'
+                        }
+                    }
+                )
+            })
+            .catch(error => {
+
+                console.log(error)
+
+                if(error.response.status == 403){
+        
+                    configCustomAlert(
+                        "Cadastro de usuário",
+                        error.response.data.message, 
                         [
                             {
                                 text: "OK",
-                                onPress: async () => {
-                                    setLoading(true);
-    
-                                    api.defaults.headers['Authorization'] = `Bearer ${token}`;
-                            
-                                    await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(user));
-                                    await AsyncStorage.setItem('@RNAuth:token', token);
-                                    resolve("");
+                                onPress: () => {
+                                    setTitle(null);
+                                    setMessage(null);
+                                    setButtons(null);
+                                    setStyleCustomAlert(null);
+
                                     setLoading(false);
-            
+                                },
+                                styles: {
+                                    backgroundColor: '#00000000',
+                                    color: '#fff',
+                                    borderColor: '#fff'
                                 }
                             }
-                        ]
-                    )
-                }
-            } catch (error) {
-                
-                if(error.response.status == 403){
-        
-                    Alert.alert(error.response.data.title, error.response.data.message, [{
-                        text: "OK",
-                        onPress: () => {
-                            setLoading(false);
+                        ],
+                        {
+                            container: {
+                                backgroundColor: '#e0c00b'
+                            },
+                            title: {
+                                color: '#fff',
+                            },
+                            message: {
+                                color: '#fff'
+                            }
                         }
-                    }])
+                    )
         
+                } else {
+
+                    configCustomAlert(
+                        "Cadastro de usuário",
+                        "Ocorreu algum erro inesperado, tente novamento mais tarde",
+                        [
+                            {
+                                text: "OK",
+                                onPress: () => {
+                                    setTitle(null);
+                                    setMessage(null);
+                                    setButtons(null);
+                                    setStyleCustomAlert(null);
+
+                                    setLoading(false);
+                                },
+                                styles: {
+                                    backgroundColor: '#00000000',
+                                    color: '#fff'
+                                }
+                            }
+                        ],
+                        {
+                            container: {
+                                backgroundColor: '#c90e27'
+                            },
+                            title: {
+                                color: '#fff',
+                            },
+                            message: {
+                                color: '#fff'
+                            }
+                        }
+                    )
+
+                    reject(error);
                 }
     
-                reject(error);
-            }
+            });
+
         });
         
     }
@@ -124,9 +232,20 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ signed: !!user, loading, user: user, signIn, signOut, register }}>
-            {children}
-        </AuthContext.Provider>
+        <>
+            <CustomAlert
+                visible={modalVisible}
+                setModalVisible={setModalVisible}
+                title={title}
+                message={message}
+                styleCustomAlert={styleCustomAlert}
+                buttons={buttons}
+                onRequestClose={() => setLoading(false)}
+            />
+            <AuthContext.Provider value={{ signed: !!user, loading, user: user, signIn, signOut, register }}>
+                {children}
+            </AuthContext.Provider>
+        </>
     );
 };
 

@@ -1,3 +1,5 @@
+import { RegisterForm } from "../@types/app";
+
 var Buffer = require('buffer/').Buffer;
 
 interface Response {

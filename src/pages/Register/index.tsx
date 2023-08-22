@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { View, TouchableOpacity, TextInput, Text, KeyboardAvoidingView, ScrollView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Controller, useForm } from 'react-hook-form';
-import { useFonts } from 'expo-font';
 import { useAuth } from '../../contexts/auth';
+import { RegisterForm } from '../../@types/app';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 
 import Heart from '../../../assets/svgs/heart.svg';
@@ -25,13 +25,13 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
     }
 
     return (
-        <KeyboardAvoidingView 
-            behavior={Platform.OS == "ios" ? "padding" : "height"} 
+        <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
             className="w-full flex-1 h-full bg-[#25a55f] pt-10 px-5 justify-center"
         >
 
-            <TouchableWithoutFeedback 
-                className="w-full h-full" 
+            <TouchableWithoutFeedback
+                className="w-full h-full"
                 onPress={() => Keyboard.dismiss()}
             >
                 <ScrollView
@@ -247,7 +247,7 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
                         <TouchableOpacity className="w-full p-3 flex justify-center items-center rounded-md bg-white border border-black border-solid" onPress={handleSubmit(submitForm)}>
 
                             <Text className="text-black text-[20px] font-['Bourton-inline']">CADASTRAR-SE</Text>
-                            
+
                         </TouchableOpacity>
 
 

@@ -7,6 +7,7 @@ import { useForm, Controller } from "react-hook-form";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 
 import Logo from '../../../assets/svgs/logo.svg';
+import { LoginForm } from "../../@types/app";
 
 const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
     const { control, handleSubmit } = useForm<LoginForm>({
