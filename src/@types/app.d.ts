@@ -1,4 +1,5 @@
 /// <reference types="nativewind/types" />`
+import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { ModalProps, PressableProps, ViewStyle, TextStyle, StyleProp } from "react-native";
 
@@ -46,7 +47,11 @@ interface AuthContextData {
     signed: boolean;
     loading: boolean;
     user: User | null;
-    signIn(username: string, password: string): Promise<void>;
+    signIn(username: string, password: string): Promise<unknown>;
     signOut(): void;
     register(values: RegisterForm): Promise<unknown>;
+}
+
+interface CustomRouteType extends NativeStackHeaderProps {
+    children?: React.ReactNode;
 }

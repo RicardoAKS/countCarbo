@@ -21,7 +21,10 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
     const { signIn } = useAuth();
 
     async function handleSignIn(values: LoginForm) {
-        signIn(values.email, values.password);
+        signIn(values.email, values.password)
+        .catch((error) => {
+            navigation.navigate("SignIn");
+        })
     }
 
     return (

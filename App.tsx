@@ -26,7 +26,7 @@ const App: React.FC = () => {
   }
   
   return (
-    <View className="w-full h-full flex-1" onLayout={onLayoutRootView}>
+    <View className="w-full h-full flex-1 relative" onLayout={onLayoutRootView}>
       <NavigationContainer>
         <AuthProvider>
           <StatusBar style="auto" translucent />

@@ -86,8 +86,8 @@ const CustomAlert: React.FC<CustomAlertProps> = (props) => {
             visible={props.visible}
             onRequestClose={() => props.onRequestClose}
         >
-            <Pressable 
-                style={[styles.androidBackdrop, styles.backdrop]} 
+            <Pressable
+                style={[styles.androidBackdrop, styles.backdrop]}
                 onPress={
                     (e) => {
                         props.setModalVisible(false)
