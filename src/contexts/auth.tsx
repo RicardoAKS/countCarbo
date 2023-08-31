@@ -1,6 +1,5 @@
 import React, { createContext, PropsWithChildren, useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as auth from '../services/auth';
 import api from '../services/api';
 
 import { AuthContextData, CustomAlertButtonType, CustomRouteType, RegisterForm, User, styleCustomAlertType } from '../@types/app';
@@ -91,8 +90,10 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             })
             .catch((error) => {
 
+                console.log(error)
+
                 setLoading(false);
-                if (error.response.status == 403) {
+                if (error.response.status == 403 && error.response.headers["content-type"] == 'application/json') {
 
                     configCustomAlert(
                         "Login de Usúario",
