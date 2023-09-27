@@ -50,8 +50,22 @@ interface AuthContextData {
     signIn(username: string, password: string): Promise<unknown>;
     signOut(): void;
     register(values: RegisterForm): Promise<unknown>;
+    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface CustomRouteType extends NativeStackHeaderProps {
     children?: React.ReactNode;
+}
+
+interface HourCadastre {
+    hour: string;
+    min_carbohydrate?: number;
+    max_carbohydrate?: number;
+    description?: string;
+    notification: boolean;
+}
+
+interface Hour extends HourCadastre {
+    id: number;
+    users_id: number;
 }

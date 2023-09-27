@@ -3,7 +3,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Settings from '../pages/Settings';
-import Times from '../pages/Times';
+import Times from '../pages/Hours';
+import Logout from '../pages/Logout';
 
 const TabsStack = createBottomTabNavigator();
 const options: any = { 
@@ -36,6 +37,16 @@ const TabsRoutes: React.FC = () => (
                 {
                     ...options,
                     tabBarIcon: ({ focused, color, size }) => <Ionicons name="settings" size={size} color={color} /> 
+                }
+            }
+        />
+        <TabsStack.Screen 
+            name="Sair"
+            component={Logout}
+            options={
+                {
+                    ...options,
+                    tabBarIcon: ({ focused, color, size }) => <Ionicons name="log-out-outline" size={size} color={color} /> 
                 }
             }
         />

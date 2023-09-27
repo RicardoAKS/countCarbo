@@ -35,7 +35,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     async function signIn(email: string, password: string) {
 
-
         setLoading(true);
         api.post("/app/login", JSON.stringify({
             email: email,
@@ -90,10 +89,10 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             })
             .catch((error) => {
 
-                console.log(error)
+                console.log("error", error)
 
                 setLoading(false);
-                if (error.response.status == 403 && error.response.headers["content-type"] == 'application/json') {
+                if (typeof error.response != "undefined" && error.response.status == 403 && error.response.headers["content-type"] == 'application/json') {
 
                     configCustomAlert(
                         "Login de Usúario",
@@ -361,7 +360,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                 buttons={buttons}
                 onRequestClose={() => setLoading(false)}
             />
-            <AuthContext.Provider value={{ signed: !!user, loading, user: user, signIn, signOut, register }}>
+            <AuthContext.Provider value={{ signed: !!user, setLoading, loading, user: user, signIn, signOut, register }}>
                 {children}
             </AuthContext.Provider>
         </>
