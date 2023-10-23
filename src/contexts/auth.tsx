@@ -169,19 +169,11 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
         setLoading(true)
 
-        new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve("")
-            }, 1000)
-        })
+        api.defaults.headers['Authorization'] = ``;
+        AsyncStorage.clear()
             .then(() => {
-
-                api.defaults.headers['Authorization'] = ``;
-                AsyncStorage.clear()
-                    .then(() => {
-                        setUser(null);
-                        setLoading(false);
-                    })
+                setUser(null);
+                setLoading(false);
             })
 
     }

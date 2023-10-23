@@ -53,7 +53,7 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
                         </View>
                     </View>
 
-                    <View className="h-1/2 w-full justify-end items-center flex">
+                    <View className="h-1/2 w-full justify-end items-center flex bg-[#25a55f]">
                         <Controller
                             control={control}
                             name="email"
