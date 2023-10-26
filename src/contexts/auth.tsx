@@ -4,6 +4,7 @@ import api from '../services/api';
 
 import { AuthContextData, CustomAlertButtonType, CustomRouteType, RegisterForm, User, styleCustomAlertType } from '../@types/app';
 import CustomAlert from '../components/CustomAlert';
+import { AxiosResponse } from 'axios';
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
@@ -26,7 +27,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     }, [title, message, styleCustomAlert, buttons]);
 
-    const configCustomAlert = (title: string, message: string, buttons: Array<CustomAlertButtonType>, styleCustomAlert?: styleCustomAlertType) => {
+    function configCustomAlert(title: string|null, message: string|null, buttons: Array<CustomAlertButtonType>, styleCustomAlert?: styleCustomAlertType){
         setTitle(title);
         setMessage(message);
         setButtons(buttons);
@@ -50,7 +51,6 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
                     await AsyncStorage.setItem('@RNAuth:user', JSON.stringify(response.data.user));
                     await AsyncStorage.setItem('@RNAuth:token', response.data.token);
-                    setLoading(false);
                 } else {
                     setLoading(false);
                     configCustomAlert(
@@ -191,8 +191,14 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
                     setLoading(false);
 
-                    let user = values;
-                    delete user.password;
+                    let date = new Date();
+                    let user: User = {
+                        name: values.name, 
+                        last_name: values.last_name,
+                        email: values.email,
+                        create_date: date.toISOString().split('T')[0] + ' ' + date.toTimeString().split(' ')[0],
+                        status: 1
+                    };
 
                     setUser(user);
 
@@ -334,9 +340,25 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
             if (storagedUser && storageToken) {
                 api.defaults.headers['Authorization'] = `Bearer ${storageToken}`;
-                setUser(JSON.parse(storagedUser));
+
+                api.get('/app/checkLogin')
+                .then((response) => {
+
+                    if(response.data.response){
+                        setUser(response.data.response);
+                    } else {
+                        setUser(null);
+                        setLoading(false);
+                    }
+
+                })
+                .catch(error => {
+                    setUser(null);
+                    setLoading(false);
+
+                    console.log(error)
+                })
             }
-            setLoading(false);
         })()
 
     }, []);
@@ -352,7 +374,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
                 buttons={buttons}
                 onRequestClose={() => setLoading(false)}
             />
-            <AuthContext.Provider value={{ signed: !!user, setLoading, loading, user: user, signIn, signOut, register }}>
+            <AuthContext.Provider value={{ signed: !!user, setLoading, loading, user: user, signIn, signOut, register, configCustomAlert }}>
                 {children}
             </AuthContext.Provider>
         </>

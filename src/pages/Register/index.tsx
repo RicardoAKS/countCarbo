@@ -14,7 +14,7 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
         mode: 'onChange',
         defaultValues: {
             name: "",
-            lastName: "",
+            last_name: "",
             email: "",
             password: ""
         }
@@ -117,7 +117,7 @@ const Register: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
                         <Controller
                             control={control}
-                            name="lastName"
+                            name="last_name"
                             rules={{ required: false }}
                             render={
                                 ({ field, fieldState }) => {

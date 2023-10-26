@@ -5,7 +5,7 @@ import { ModalProps, PressableProps, ViewStyle, TextStyle, StyleProp } from "rea
 
 interface RegisterForm {
     name: string;
-    lastName: string;
+    last_name: string;
     email: string;
     password: string;
 };
@@ -17,7 +17,10 @@ interface LoginForm {
 
 interface User {
     name: string;
+    last_name: string;
     email: string;
+    create_date: string;
+    status: number;
 }
 
 interface ForgetPasswordType {
@@ -51,6 +54,7 @@ interface AuthContextData {
     signOut(): void;
     register(values: RegisterForm): Promise<unknown>;
     setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+    configCustomAlert(title: string|null, message: string|null, buttons: Array<CustomAlertButtonType>, styleCustomAlert?: styleCustomAlertType): void;
 }
 
 interface CustomRouteType extends NativeStackHeaderProps {
@@ -58,14 +62,14 @@ interface CustomRouteType extends NativeStackHeaderProps {
 }
 
 interface HourCadastre {
+    id?: string|number;
     hour: string;
     min_carbohydrate?: number;
     max_carbohydrate?: number;
     description?: string;
-    notification: boolean;
+    notification: boolean|number|string;
 }
 
 interface Hour extends HourCadastre {
-    id: number;
-    users_id: number;
+    id: number|string;
 }

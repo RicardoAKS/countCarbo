@@ -7,7 +7,6 @@ import { useFonts } from 'expo-font';
 import Routes from './src/routes';
 import { View } from 'react-native';
 
-
 SplashScreen.preventAutoHideAsync();
 
 const App: React.FC = () => {
