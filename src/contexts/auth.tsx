@@ -251,7 +251,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
                     console.log(error)
 
-                    if (error.response.status == 403) {
+                    if (error.response && error.response.status == 403) {
 
                         configCustomAlert(
                             "Cadastro de usuário",
@@ -358,6 +358,8 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
                     console.log(error)
                 })
+            } else {
+                setLoading(false);
             }
         })()
 

@@ -22,9 +22,9 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
 
     async function handleSignIn(values: LoginForm) {
         signIn(values.email, values.password)
-        .catch((error) => {
-            navigation.navigate("SignIn");
-        })
+            .catch((error) => {
+                navigation.navigate("SignIn");
+            })
     }
 
     return (
@@ -54,104 +54,109 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
                     </View>
 
                     <View className="h-1/2 w-full justify-end items-center flex bg-[#25a55f]">
-                        <Controller
-                            control={control}
-                            name="email"
-                            rules={
-                                {
-                                    required: "E-mail obrigatório",
-                                    validate: {
-                                        matchPattern: (v) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v),
+
+                        <View className="bg-[#25a55f] w-full justify-end items-center flex">
+                            <Controller
+                                control={control}
+                                name="email"
+                                rules={
+                                    {
+                                        required: "E-mail obrigatório",
+                                        validate: {
+                                            matchPattern: (v) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v),
+                                        }
                                     }
                                 }
-                            }
-                            render={
-                                ({ field, fieldState }) => {
-                                    let placeholderTextColor = "#ffffff60";
+                                render={
+                                    ({ field, fieldState }) => {
+                                        let placeholderTextColor = "#ffffff60";
 
-                                    if (fieldState.error) {
-                                        placeholderTextColor = "#f0000060";
+                                        if (fieldState.error) {
+                                            placeholderTextColor = "#f0000060";
+                                        }
+
+                                        return (
+                                            <View className="w-full mb-3">
+                                                <TextInput
+                                                    className={`rounded-md border bg-[#25a55f] border-white border-solid w-full p-2 text-white ${fieldState.error ? 'border-red-600' : ''} ${fieldState.error ? 'text-red-600' : ''}`}
+                                                    placeholder="E-mail"
+                                                    placeholderTextColor={placeholderTextColor}
+                                                    value={field.value}
+                                                    onChangeText={field.onChange}
+                                                />
+
+                                                {
+                                                    fieldState.error && fieldState.error?.type == "required" && (
+                                                        <Text className="text-xs text-red-600 font-bold ml-1">{fieldState?.error?.message}</Text>
+                                                    )
+                                                }
+
+                                                {
+                                                    fieldState.error && fieldState.error?.type == "matchPattern" && (
+                                                        <Text className="text-xs text-red-600 font-bold ml-1">O e-mail deve ser válido</Text>
+                                                    )
+                                                }
+
+                                            </View>
+                                        )
                                     }
-
-                                    return (
-                                        <View className="w-full mb-3">
-                                            <TextInput
-                                                className={`rounded-md border bg-[#25a55f] border-white border-solid w-full p-2 text-white ${fieldState.error ? 'border-red-600' : ''} ${fieldState.error ? 'text-red-600' : ''}`}
-                                                placeholder="E-mail"
-                                                placeholderTextColor={placeholderTextColor}
-                                                value={field.value}
-                                                onChangeText={field.onChange}
-                                            />
-
-                                            {
-                                                fieldState.error && fieldState.error?.type == "required" && (
-                                                    <Text className="text-xs text-red-600 font-bold ml-1">{fieldState?.error?.message}</Text>
-                                                )
-                                            }
-
-                                            {
-                                                fieldState.error && fieldState.error?.type == "matchPattern" && (
-                                                    <Text className="text-xs text-red-600 font-bold ml-1">O e-mail deve ser válido</Text>
-                                                )
-                                            }
-
-                                        </View>
-                                    )
                                 }
-                            }
-                        />
+                            />
 
-                        <Controller
-                            control={control}
-                            name="password"
-                            rules={
-                                {
-                                    required: "Senha obrigatória"
-                                }
-                            }
-                            render={
-                                ({ field, fieldState }) => {
-                                    let placeholderTextColor = "#ffffff60";
-
-                                    if (fieldState.error) {
-                                        placeholderTextColor = "#f0000060";
+                            <Controller
+                                control={control}
+                                name="password"
+                                rules={
+                                    {
+                                        required: "Senha obrigatória"
                                     }
-
-                                    return (
-                                        <View className="w-full">
-
-                                            <TextInput
-                                                className={`rounded-md border bg-[#25a55f] border-white border-solid w-full p-2 text-white ${fieldState.error ? 'border-red-600' : ''} ${fieldState.error ? 'text-red-600' : ''}`}
-                                                placeholder="Senha"
-                                                placeholderTextColor={placeholderTextColor}
-                                                value={field.value}
-                                                onChangeText={field.onChange}
-                                                secureTextEntry
-                                            />
-
-                                            {
-                                                fieldState.error && fieldState.error?.type == "required" && (
-                                                    <Text className="text-xs text-red-600 font-bold ml-1">{fieldState?.error?.message}</Text>
-                                                )
-                                            }
-
-                                        </View>
-                                    )
                                 }
+                                render={
+                                    ({ field, fieldState }) => {
+                                        let placeholderTextColor = "#ffffff60";
+
+                                        if (fieldState.error) {
+                                            placeholderTextColor = "#f0000060";
+                                        }
+
+                                        return (
+                                            <View className="w-full">
+
+                                                <TextInput
+                                                    className={`rounded-md border bg-[#25a55f] border-white border-solid w-full p-2 text-white ${fieldState.error ? 'border-red-600' : ''} ${fieldState.error ? 'text-red-600' : ''}`}
+                                                    placeholder="Senha"
+                                                    placeholderTextColor={placeholderTextColor}
+                                                    value={field.value}
+                                                    onChangeText={field.onChange}
+                                                    secureTextEntry
+                                                />
+
+                                                {
+                                                    fieldState.error && fieldState.error?.type == "required" && (
+                                                        <Text className="text-xs text-red-600 font-bold ml-1">{fieldState?.error?.message}</Text>
+                                                    )
+                                                }
+
+                                            </View>
+                                        )
+                                    }
+                                }
+                            />
+
+                            <TouchableOpacity
+                                className="w-full py-3 flex justify-center items-center bg-white mt-3 rounded-md"
+                                onPress={handleSubmit(handleSignIn)}
+                            >
+                                <Text className="text-[#000] font-['Bourton-inline'] text-[20px]">ENTRAR</Text>
+                            </TouchableOpacity>
+
+                            <Text className="text-white mt-3" onPress={
+                                () => navigation.navigate("ForgetPassword")
                             }
-                        />
+                            >Esqueci minha senha</Text>
 
-                        <TouchableOpacity
-                            className="w-full py-3 flex justify-center items-center bg-white mt-3 rounded-md"
-                            onPress={handleSubmit(handleSignIn)}
-                        >
-                            <Text className="text-[#000] font-['Bourton-inline'] text-[20px]">ENTRAR</Text>
-                        </TouchableOpacity>
+                        </View>
 
-                        <Text className="text-white mt-3" onPress={
-                            () => navigation.navigate("ForgetPassword")
-                        }
-                        >Esqueci minha senha</Text>
                     </View>
 
                 </View>

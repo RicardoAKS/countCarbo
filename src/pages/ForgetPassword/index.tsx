@@ -15,7 +15,6 @@ const ForgetPassword: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
     });
 
     async function submitEmail(values: ForgetPasswordType) {
-        console.log(values);
 
         Alert.alert(
             "Recuperar senha",

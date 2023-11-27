@@ -1,19 +1,22 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { View, Button, Text, TouchableOpacity, Modal, TextInput, ScrollView, Switch, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Button, Text, TouchableOpacity, Modal, TextInput, ScrollView, Switch, RefreshControl, ActivityIndicator, ImageBackground } from "react-native";
 import { useAuth } from "../../contexts/auth";
-import { Hour, HourCadastre } from "../../@types/app";
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Food, Hour, HourCadastre } from "../../@types/app";
 import TimeInput from "@tighten/react-native-time-input";
 import { Controller, useForm } from "react-hook-form";
 import MaskInput from 'react-native-mask-input'
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { FontAwesome5, Ionicons, MaterialIcons } from 'react-native-vector-icons';
 import api from "../../services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import colors from 'tailwindcss/colors';
+import { ModalFood } from "../../components/ModalFood";
+import { ListFoodByHourModal } from "../../components/ListFoodByHourModal";
 
 const Times: React.FC = () => {
     const [hours, setHours] = useState<Hour[]>([]);
     const [hourEdit, setHourEdit] = useState<Hour | null>(null);
+
+    const [hourId, setHourId] = useState<string|number|null>(null);
 
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
@@ -25,6 +28,9 @@ const Times: React.FC = () => {
     const [modalHourVisible, setModalHourVisible] = useState(false);
 
     const [maxCarbohydrate, setMaxCarbohydrate] = useState(null);
+
+    const [food, setFood] = useState<Food | null>(null);
+    const [foodModalVisible, setFoodModalVisible] = useState<boolean>(false);
 
     const { control, handleSubmit, setValue, clearErrors, getValues } = useForm<HourCadastre>({
         mode: 'onChange'
@@ -44,31 +50,11 @@ const Times: React.FC = () => {
         setValue("notification", false);
 
         try {
-            
+
             let response = await api.post('/app/submitHour', values);
 
-            if(response.data.response){
-                let hour: Hour = {
-                    id: response.data.response,
-                    ...values
-                }
-        
-                setHours(state => {
-        
-                    if (state.findIndex(item => item.id == hour.id) == -1) {
-                        state.push(hour)
-                    }
-        
-                    state.sort((a: Hour, b: Hour) => {
-                        if (a.hour > b.hour) return -1;
-                        if (a.hour < b.hour) return 1;
-        
-                        return 0;
-                    })
-        
-                    return state;
-                });
-                setLoading(false);
+            if (response.data.response) {
+                setRefreshing(true);
             } else {
                 configCustomAlert(
                     "Cadastro de Horário",
@@ -77,9 +63,9 @@ const Times: React.FC = () => {
                         {
                             text: "OK",
                             onPress: () => {
-    
+
                                 configCustomAlert(null, null, null, null)
-    
+
                                 setLoading(false);
                             },
                             styles: {
@@ -105,7 +91,7 @@ const Times: React.FC = () => {
         } catch (error) {
 
             console.log(error)
-            if(error.response.status == 403 || error.response.status == 409){
+            if (error.response.status == 403 || error.response.status == 409) {
                 configCustomAlert(
                     "Cadastro de Horário",
                     error.response.data.message,
@@ -145,9 +131,9 @@ const Times: React.FC = () => {
                         {
                             text: "OK",
                             onPress: () => {
-    
+
                                 configCustomAlert(null, null, null, null)
-    
+
                                 setLoading(false);
                             },
                             styles: {
@@ -175,8 +161,8 @@ const Times: React.FC = () => {
 
     }
 
-    async function handleEditHour(values: HourCadastre){
-        
+    async function handleEditHour(values: HourCadastre) {
+
         setModalHourVisible(false);
         setHourEdit(null);
         setLoading(true);
@@ -189,27 +175,11 @@ const Times: React.FC = () => {
         setValue("notification", false);
 
         try {
-            
+
             let response = await api.post('/app/editHour', values);
 
-            if(response.data.response){
-                let hour: Hour = {
-                    id: values.id,
-                    ...values
-                }
-        
-                setHours(state => {
-        
-                    let index = state.findIndex(item => item.id == hour.id);
-                    if (index == -1) {
-                        state.push(hour)
-                    } else {
-                        state[index] = hour;
-                    }
-        
-                    return state;
-                });
-                setLoading(false);
+            if (response.data.response) {
+                setRefreshing(true);
             } else {
                 configCustomAlert(
                     "Cadastro de Horário",
@@ -218,9 +188,9 @@ const Times: React.FC = () => {
                         {
                             text: "OK",
                             onPress: () => {
-    
+
                                 configCustomAlert(null, null, null, null)
-    
+
                                 setLoading(false);
                             },
                             styles: {
@@ -246,7 +216,7 @@ const Times: React.FC = () => {
         } catch (error) {
 
             console.log(error)
-            if(error.response.status == 403 || error.response.status == 409){
+            if (error.response.status == 403 || error.response.status == 409) {
                 configCustomAlert(
                     "Cadastro de Horário",
                     error.response.data.message,
@@ -286,9 +256,9 @@ const Times: React.FC = () => {
                         {
                             text: "OK",
                             onPress: () => {
-    
+
                                 configCustomAlert(null, null, null, null)
-    
+
                                 setLoading(false);
                             },
                             styles: {
@@ -313,7 +283,52 @@ const Times: React.FC = () => {
             }
 
         }
-        
+
+    }
+
+    async function handleDeleteHour(id: string | number) {
+
+        api.post('/app/deleteHour', {
+            id: id
+        })
+            .then(() => {
+                setRefreshing(true);
+            })
+            .catch(err => {
+                console.log(err)
+
+                configCustomAlert(
+                    "Deletar Horário",
+                    "Ocorreu algum erro inesperado, tente novamento mais tarde",
+                    [
+                        {
+                            text: "OK",
+                            onPress: () => {
+
+                                configCustomAlert(null, null, null, null)
+
+                                setLoading(false);
+                            },
+                            styles: {
+                                backgroundColor: '#00000000',
+                                color: '#fff'
+                            }
+                        }
+                    ],
+                    {
+                        container: {
+                            backgroundColor: '#c90e27'
+                        },
+                        title: {
+                            color: '#fff',
+                        },
+                        message: {
+                            color: '#fff'
+                        }
+                    }
+                )
+            })
+
     }
 
     useEffect(() => {
@@ -334,7 +349,7 @@ const Times: React.FC = () => {
 
     }, [hourEdit])
 
-    async function getHours(pageNumber){
+    async function getHours(pageNumber) {
 
         return new Promise(async (resolve, reject) => {
 
@@ -355,33 +370,31 @@ const Times: React.FC = () => {
 
     useFocusEffect(useCallback(() => {
 
-        if(!refreshing){
+        if (!refreshing) {
             getHours(page)
-            .then((response) => {
-                setTotalPages(response["total_pages"]);
-                setHours(response["hours"]);
-                setLoading(false);
-                setLoadMore(false);
-            })
-            .catch((error) => console.log(error))
+                .then((response) => {
+                    setTotalPages(response["total_pages"]);
+                    setHours(state => [...state, ...response["hours"]]);
+                    setLoading(false);
+                    setLoadMore(false);
+                })
+                .catch((error) => console.log(error))
         }
 
     }, [page]))
 
     useFocusEffect(useCallback(() => {
 
-        if(refreshing){
+        if (refreshing) {
             setLoadMore(false);
             getHours(1)
-            .then((response) => {
-
-                console.log(response)
-                setRefreshing(false);
-                setTotalPages(response["total_pages"]);
-                setHours(response["hours"]);
-                setLoading(false);
-            })
-            .catch((error) => console.log(error))
+                .then((response) => {
+                    setRefreshing(false);
+                    setTotalPages(response["total_pages"]);
+                    setHours(response["hours"]);
+                    setLoading(false);
+                })
+                .catch((error) => console.log(error))
         }
 
     }, [refreshing]))
@@ -391,14 +404,6 @@ const Times: React.FC = () => {
         setLoadMore(false);
         setRefreshing(true);
         setPage(1);
-        getHours(1)
-        .then((response) => {
-            setRefreshing(false);
-            setTotalPages(response["total_pages"]);
-            setHours(response["hours"]);
-            setLoading(false);
-        })
-        .catch((error) => console.log(error))
 
     }, [])
 
@@ -409,16 +414,16 @@ const Times: React.FC = () => {
     }
 
     return (
-        <ScrollView 
-            className="w-full h-full pb-20 bg-[#25a55f]" 
+        <ScrollView
+            className="w-full h-full pb-20 pt-5 bg-[#25a55f]"
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             onScroll={
                 ({ nativeEvent }) => {
-                    if(isCloseBottom(nativeEvent)){
+                    if (isCloseBottom(nativeEvent)) {
 
-                        if(page <= totalPages){
+                        if (page <= totalPages) {
                             setLoadMore(true);
                             setPage(page + 1);
                         }
@@ -429,7 +434,7 @@ const Times: React.FC = () => {
             scrollEventThrottle={400}
         >
 
-            <View className="w-full h-full items-center pt-8 px-5">
+            <View className="w-full h-full items-center pt-8 px-5 pb-10">
 
                 {
                     hours.length == 0 ?
@@ -445,15 +450,10 @@ const Times: React.FC = () => {
                         )
                         :
                         (
-                            <View className="w-full flex flex-row flex-wrap justify-end">
+                            <View className="w-full flex flex-row flex-wrap">
 
-                                <TouchableOpacity className="rounded-md bg-[#fff] px-4 py-2 mt-3 flex flex-row justify-center items-center mx-2">
-                                    <Ionicons name="add-outline" size={20} color={"#25a55f"} />
-                                    <FontAwesome5 name="utensils" size={25} color={"#25a55f"} />
-                                </TouchableOpacity>
-
-                                <TouchableOpacity 
-                                    className="rounded-md bg-[#fff] px-2 py-2 mt-3 flex flex-row justify-center items-center" 
+                                <TouchableOpacity
+                                    className="rounded-md bg-[#fff] px-2 py-2 mt-3 flex flex-row justify-center items-center"
                                     onPress={
                                         () => {
                                             setValue("hour", "");
@@ -477,8 +477,8 @@ const Times: React.FC = () => {
                     hours.map((hour: Hour, index: number) => {
 
                         return (
-                            <View className="w-full border-b border-[#00000050] py-2" key={index}>
-                                <View className="w-full flex flex-row flex-wrap justify-between items-center">
+                            <TouchableOpacity className="w-full flex flex-row flex-wrap border-b border-[#00000050] py-2" key={index} onPress={() => setHourId(hour.id)}>
+                                <View className="w-4/5 flex flex-row flex-wrap justify-between items-center">
 
                                     <View className="w-1/2 flex flex-row flex-wrap justify-start items-start">
                                         <Text className="text-3xl text-white font-['Bourton-inline']">
@@ -495,7 +495,7 @@ const Times: React.FC = () => {
                                     {
                                         hour.min_carbohydrate && hour.max_carbohydrate && (
                                             <View className="flex flex-row flex-wrap w-1/2 px-2">
-                                                <Text className="text-gray-200 text-base w-full text-right">Carboidratos</Text>
+                                                <Text className="text-white text-base w-full text-right font-bold">Carboidratos</Text>
                                                 <View className="flex flex-row flex-wrap w-full justify-end">
                                                     <Text className="text-white">{hour.min_carbohydrate} - {hour.max_carbohydrate}</Text>
                                                 </View>
@@ -505,18 +505,81 @@ const Times: React.FC = () => {
 
                                     <Text numberOfLines={3} className="w-3/4 text-lg text-white text-justify">{hour.description}</Text>
 
-                                    <View className="w-1/4 flex justify-center items-center">
+                                </View>
+                                <View className="w-1/5 flex items-center">
 
-                                        <TouchableOpacity className="bg-white rounded-lg flex justify-center items-center px-3 py-2" onPress={() => setHourEdit(hour)}>
+                                    <View className="w-full">
+                                        <TouchableOpacity className="bg-white rounded-lg flex justify-center items-center px-3 py-2 mb-1" onPress={() => setHourEdit(hour)}>
                                             <FontAwesome5 name="pencil-alt" size={20} color={"#25a55f"} />
                                         </TouchableOpacity>
+                                    </View>
 
+                                    <View className="w-full">
+                                        <TouchableOpacity className="bg-red-600 rounded-lg flex justify-center items-center px-3 py-2" onPress={() => handleDeleteHour(hour.id)}>
+                                            <MaterialIcons name="delete" size={20} color="white" />
+                                        </TouchableOpacity>
                                     </View>
 
                                 </View>
-                            </View>
+
+                                <View className="w-full mt-2">
+
+                                    <ScrollView
+                                        className="w-full pb-2"
+                                        horizontal={true}
+                                    >
+
+                                        {
+                                            hour.foods && hour.foods.map((food: Food, i) => {
+
+                                                return (
+                                                    <TouchableOpacity
+                                                        className="w-20 overflow-hidden rounded-lg pr-1"
+                                                        key={i}
+                                                        onPress={
+                                                            () => {
+                                                                setFood(food);
+                                                                setFoodModalVisible(true);
+                                                            }
+                                                        }
+                                                    >
+                                                        <ImageBackground source={{ uri: `${api.defaults.baseURL}/assets/img/food/${food.id}/${food.images[0].name}` }} imageStyle={{ width: "100%", height: "100%", resizeMode: "cover" }} className="w-full aspect-square z-10 rounded-lg overflow-hidden flex flex-row flex-wrap relative">
+
+                                                        </ImageBackground>
+                                                    </TouchableOpacity>
+                                                );
+                                            })
+                                        }
+
+                                    </ScrollView>
+
+                                </View>
+                            </TouchableOpacity>
                         )
                     })
+                }
+
+                {
+                    food && (
+                        <ModalFood
+                            food={food}
+                            visible={foodModalVisible}
+                            onRequestClose={() => {
+                                setFoodModalVisible(false);
+                                setFood(null);
+                            }}
+                        />
+                    )
+                }
+
+                {
+                    hourId && (
+                        <ListFoodByHourModal
+                            visible={true}
+                            onRequestClose={() => setHourId(null)}
+                            hourId={hourId}
+                        />
+                    )
                 }
 
                 {
@@ -538,7 +601,7 @@ const Times: React.FC = () => {
             >
 
                 <ScrollView className="w-full h-full bg-[#00000090]">
-                    <View className="w-full h-full items-center px-8 py-10 relative">
+                    <View className="w-full h-full items-center px-5 py-10 relative">
 
                         <View className="fixed w-full bg-white rounded-md flex flex-row flex-wrap justify-center items-center px-3 py-2 z-20">
 
@@ -549,6 +612,9 @@ const Times: React.FC = () => {
                             </View>
 
                             <Text className="text-5xl font-['Bourton-inline']">Horário</Text>
+                            <View className="w-full border border-[#00000050] rounded my-2" />
+
+                            <Text className="text-gray-500 text-sm text-center">Ao não colocar os carboidratos, o horário funcionara como lembrete</Text>
                             <View className="w-full border border-[#00000050] rounded my-2" />
 
                             <Controller
@@ -566,7 +632,7 @@ const Times: React.FC = () => {
                                     ({ field, fieldState }) => {
 
                                         return (
-                                            <View className="w-2/3 pr-2">
+                                            <View className="w-full pr-2">
 
                                                 <View className="w-full flex flex-row flex-wrap">
                                                     <Text className="text-lg text-gray-500 font-bold">Horário</Text><Text className="text-red-600 font-bold">*</Text>
@@ -589,7 +655,7 @@ const Times: React.FC = () => {
                                 }
                             />
 
-                            <Controller
+                            {/* <Controller
                                 control={control}
                                 name="notification"
                                 render={
@@ -612,7 +678,7 @@ const Times: React.FC = () => {
                                         )
                                     }
                                 }
-                            />
+                            /> */}
 
                             <View className="w-full flex flex-row flex-wrap">
 
@@ -765,6 +831,9 @@ const Times: React.FC = () => {
                             <Text className="text-5xl font-['Bourton-inline']">Horário</Text>
                             <View className="w-full border border-[#00000050] rounded my-2" />
 
+                            <Text className="text-gray-500 text-sm text-center">Ao não colocar os carboidratos, o horário funcionara como lembrete</Text>
+                            <View className="w-full border border-[#00000050] rounded my-2" />
+
                             <Controller
                                 control={control}
                                 name="hour"
@@ -780,7 +849,7 @@ const Times: React.FC = () => {
                                     ({ field, fieldState }) => {
 
                                         return (
-                                            <View className="w-2/3 pr-2">
+                                            <View className="w-full pr-2">
 
                                                 <View className="w-full flex flex-row flex-wrap">
                                                     <Text className="text-lg text-gray-500 font-bold">Horário</Text><Text className="text-red-600 font-bold">*</Text>
@@ -803,7 +872,7 @@ const Times: React.FC = () => {
                                 }
                             />
 
-                            <Controller
+                            {/* <Controller
                                 control={control}
                                 name="notification"
                                 render={
@@ -826,7 +895,7 @@ const Times: React.FC = () => {
                                         )
                                     }
                                 }
-                            />
+                            /> */}
 
                             <View className="w-full flex flex-row flex-wrap">
 

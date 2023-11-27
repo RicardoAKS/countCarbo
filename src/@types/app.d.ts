@@ -72,4 +72,33 @@ interface HourCadastre {
 
 interface Hour extends HourCadastre {
     id: number|string;
+    foods?: Food[];
+}
+
+interface ImageFood {
+    id: number;
+    food_id: number;
+    name: string;
+}
+
+interface Food {
+    id: number;
+    category_foods_id: number;
+    category_name: string;
+    weight_measure_food_id: number;
+    weight_measure: string;
+    name: string;
+    measure: string;
+    weight: number;
+    kcal: number;
+    carbohydrate: number;
+    status: number;
+    images: ImageFood[];
+    description?: string;
+}
+
+interface ApiFoodResponse {
+    count: number;
+    foods: Food[];
+    total_pages: number;
 }

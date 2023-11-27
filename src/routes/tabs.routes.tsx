@@ -1,10 +1,11 @@
 import React from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons, MaterialCommunityIcons } from 'react-native-vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import Settings from '../pages/Settings';
 import Times from '../pages/Hours';
 import Logout from '../pages/Logout';
+import Diet from '../pages/Diet';
 
 const TabsStack = createBottomTabNavigator();
 const options: any = { 
@@ -31,6 +32,16 @@ const TabsRoutes: React.FC = () => (
             } 
         />
         <TabsStack.Screen 
+            name="Dieta"
+            component={Diet}
+            options={
+                {
+                    ...options,
+                    tabBarIcon: ({ focused, color, size }) => <MaterialCommunityIcons name="fruit-watermelon" size={size} color={color} />
+                }
+            }
+        />
+        {/* <TabsStack.Screen 
             name="Configurações"
             component={Settings}
             options={
@@ -39,7 +50,7 @@ const TabsRoutes: React.FC = () => (
                     tabBarIcon: ({ focused, color, size }) => <Ionicons name="settings" size={size} color={color} /> 
                 }
             }
-        />
+        /> */}
         <TabsStack.Screen 
             name="Sair"
             component={Logout}
