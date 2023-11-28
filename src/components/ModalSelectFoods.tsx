@@ -48,6 +48,7 @@ const ModalSelectFoods: React.FC<ModalSelectFoodsProps> = ({ addFoodModal, onReq
 
         try {
             let response = await api.post('/app/searchFoods', {
+                authorization: api.defaults.headers['Authorization'],
                 search: searchString,
                 page: pageNumber,
                 categoryId: categoryNumber
@@ -64,7 +65,9 @@ const ModalSelectFoods: React.FC<ModalSelectFoodsProps> = ({ addFoodModal, onReq
 
     const getAllCategories = () => new Promise(async (resolve, reject) => {
         try {
-            let response = await api.post('/app/getCategoryFoods');
+            let response = await api.post('/app/getCategoryFoods', {
+                authorization: api.defaults.headers['Authorization']
+            });
 
             if (response.data) {
                 resolve(response.data);
@@ -202,6 +205,7 @@ const ModalSelectFoods: React.FC<ModalSelectFoodsProps> = ({ addFoodModal, onReq
 
             setLoading(true)
             api.post('/app/addFoodDiet', {
+                "authorization": api.defaults.headers['Authorization'],
                 "foodsId": foodIds
             })
             .then(() => {

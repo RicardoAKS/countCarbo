@@ -36,6 +36,7 @@ const Diet: React.FC = () => {
         try {
 
             let data = {
+                authorization: api.defaults.headers['Authorization'],
                 search: searchString,
                 page: pageNumber
             }
@@ -59,7 +60,9 @@ const Diet: React.FC = () => {
 
     const getAllCategories = () => new Promise(async (resolve, reject) => {
         try {
-            let response = await api.post('/app/getCategoryFoods');
+            let response = await api.post('/app/getCategoryFoods', {
+                authorization: api.defaults.headers['Authorization']
+            });
 
             if (response.data) {
                 resolve(response.data);
@@ -199,6 +202,7 @@ const Diet: React.FC = () => {
 
             setLoading(true)
             api.post('/app/removeFoodDiet', {
+                authorization: api.defaults.headers['Authorization'],
                 "foodsId": foodIds
             })
                 .then(() => {

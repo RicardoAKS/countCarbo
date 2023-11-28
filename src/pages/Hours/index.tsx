@@ -51,7 +51,10 @@ const Times: React.FC = () => {
 
         try {
 
-            let response = await api.post('/app/submitHour', values);
+            let response = await api.post('/app/submitHour', {
+                ...values,
+                authorization: api.defaults.headers['Authorization']
+            });
 
             if (response.data.response) {
                 setRefreshing(true);
@@ -176,7 +179,10 @@ const Times: React.FC = () => {
 
         try {
 
-            let response = await api.post('/app/editHour', values);
+            let response = await api.post('/app/editHour', {
+                ...values,
+                authorization: api.defaults.headers['Authorization']
+            });
 
             if (response.data.response) {
                 setRefreshing(true);
@@ -289,6 +295,7 @@ const Times: React.FC = () => {
     async function handleDeleteHour(id: string | number) {
 
         api.post('/app/deleteHour', {
+            authorization: api.defaults.headers['Authorization'],
             id: id
         })
             .then(() => {
@@ -356,6 +363,7 @@ const Times: React.FC = () => {
             setLoading(true);
             try {
                 let response = await api.post('/app/getHours', {
+                    authorization: api.defaults.headers['Authorization'],
                     page: pageNumber
                 });
 
@@ -378,7 +386,10 @@ const Times: React.FC = () => {
                     setLoading(false);
                     setLoadMore(false);
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => {
+                    setLoading(false);
+                    console.log(error)
+                })
         }
 
     }, [page]))
@@ -394,7 +405,10 @@ const Times: React.FC = () => {
                     setHours(response["hours"]);
                     setLoading(false);
                 })
-                .catch((error) => console.log(error))
+                .catch((error) => {
+                    setLoading(false);
+                    console.log(error)
+                })
         }
 
     }, [refreshing]))

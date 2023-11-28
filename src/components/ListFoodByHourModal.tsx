@@ -24,6 +24,7 @@ const ListFoodByHourModal: React.FC<ModalFoodProps> = ({ visible, onRequestClose
 
     const getFoods = (pageNumber: number) => new Promise((resolve, reject) => {
         api.post('app/getFoodsByHourId', {
+            authorizaton: api.defaults.headers['Authorization'],
             hourId: hourId,
             page: pageNumber
         })

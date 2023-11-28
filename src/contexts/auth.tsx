@@ -4,7 +4,7 @@ import api from '../services/api';
 
 import { AuthContextData, CustomAlertButtonType, CustomRouteType, RegisterForm, User, styleCustomAlertType } from '../@types/app';
 import CustomAlert from '../components/CustomAlert';
-import { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
@@ -341,7 +341,9 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
             if (storagedUser && storageToken) {
                 api.defaults.headers['Authorization'] = `Bearer ${storageToken}`;
 
-                api.get('/app/checkLogin')
+                api.post('/app/checkLogin', {
+                    authorization: api.defaults.headers['Authorization']
+                })
                 .then((response) => {
 
                     if(response.data.response){

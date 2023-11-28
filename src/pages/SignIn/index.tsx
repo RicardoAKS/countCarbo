@@ -150,10 +150,10 @@ const SignIn: React.FC<NativeStackHeaderProps> = ({ navigation }) => {
                                 <Text className="text-[#000] font-['Bourton-inline'] text-[20px]">ENTRAR</Text>
                             </TouchableOpacity>
 
-                            <Text className="text-white mt-3" onPress={
+                            {/* <Text className="text-white mt-3" onPress={
                                 () => navigation.navigate("ForgetPassword")
                             }
-                            >Esqueci minha senha</Text>
+                            >Esqueci minha senha</Text> */}
 
                         </View>
 
