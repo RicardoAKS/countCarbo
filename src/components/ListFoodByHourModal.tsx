@@ -119,7 +119,7 @@ const ListFoodByHourModal: React.FC<ModalFoodProps> = ({ visible, onRequestClose
 
                     {
                         foods.length == 0 && !refreshing && (
-                            <Text className='text-lg text-center font-bold'>Nenhum alimento se encaixou com o horário configurado</Text>
+                            <Text className='text-lg text-center font-bold w-full'>Nenhum alimento se encaixou com o horário configurado</Text>
                         )
                     }
                 </View>
